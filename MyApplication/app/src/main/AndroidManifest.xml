@@ -22,6 +22,8 @@
             </intent-filter>
         </activity>
 
+        <activity android:name=".AddStudentActivity" />
+        <activity android:name=".StudentDetailActivity" />
     </application>
 
 </manifest>

@@ -9,7 +9,8 @@ import androidx.recyclerview.widget.RecyclerView
 
 class StudentAdapter(
     private val studentList: List<Student>,
-    private val onItemClick: (position: Int) -> Unit
+    private val onItemClick: (position: Int) -> Unit,
+    private val onDeleteClick: (position: Int) -> Unit
 ) : RecyclerView.Adapter<StudentAdapter.StudentViewHolder>() {
 
     inner class StudentViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
@@ -26,7 +27,7 @@ class StudentAdapter(
             }
 
             btnDelete.setOnClickListener {
-                (itemView.context as MainActivity).deleteStudent(position)
+                onDeleteClick(position)
             }
         }
     }
