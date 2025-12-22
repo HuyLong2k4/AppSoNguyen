@@ -1,18 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="vertical"
-    android:padding="12dp"
-    android:layout_marginBottom="8dp"
-    android:layout_marginTop="80dp"
-    android:background="@drawable/item_background">
+    android:layout_margin="8dp"
+    app:cardElevation="4dp"
+    app:cardCornerRadius="8dp">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:gravity="center_vertical">
+        android:padding="16dp">
 
         <LinearLayout
             android:layout_width="0dp"
@@ -21,30 +20,31 @@
             android:orientation="vertical">
 
             <TextView
-                android:id="@+id/tv_ho_ten"
+                android:id="@+id/tvMSSV"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Tên sinh viên"
+                android:text="SV001"
                 android:textSize="16sp"
                 android:textStyle="bold"
-                android:textColor="#000" />
+                android:textColor="@android:color/black" />
 
             <TextView
-                android:id="@+id/tv_mssv"
+                android:id="@+id/tvHoTen"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="20200001"
+                android:text="Nguyễn Văn A"
                 android:textSize="14sp"
-                android:textColor="#666"
-                android:layout_marginTop="4dp" />
+                android:layout_marginTop="4dp"
+                android:textColor="@android:color/darker_gray" />
         </LinearLayout>
 
         <ImageButton
-            android:id="@+id/btn_delete"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:src="@drawable/ic_delete"
+            android:id="@+id/btnDelete"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
             android:background="?attr/selectableItemBackgroundBorderless"
-            android:contentDescription="Delete" />
+            android:src="@android:drawable/ic_menu_delete"
+            android:contentDescription="Xóa sinh viên"
+            app:tint="@android:color/holo_red_dark" />
     </LinearLayout>
-</LinearLayout>
+</com.google.android.material.card.MaterialCardView>

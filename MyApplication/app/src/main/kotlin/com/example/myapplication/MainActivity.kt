@@ -1,90 +1,35 @@
 package com.example.myapplication
 
-import android.app.Activity
-import android.content.Intent
 import android.os.Bundle
-import android.view.Menu
-import android.view.MenuItem
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
-import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
+import androidx.navigation.fragment.NavHostFragment
+import androidx.navigation.ui.AppBarConfiguration
+import androidx.navigation.ui.setupActionBarWithNavController
+import com.example.myapplication.databinding.ActivityMainBinding
 
 class MainActivity : AppCompatActivity() {
-    private lateinit var rvSinhVien: RecyclerView
-    private var studentList = mutableListOf<Student>()
-    private lateinit var adapter: StudentAdapter
 
-    // Launcher để hứng kết quả khi THÊM sinh viên
-    private val addStudentLauncher = registerForActivityResult(
-        ActivityResultContracts.StartActivityForResult()
-    ) { result ->
-        if (result.resultCode == Activity.RESULT_OK) {
-            val newStudent = result.data?.getSerializableExtra("NEW_STUDENT") as? Student
-            if (newStudent != null) {
-                studentList.add(newStudent)
-                adapter.notifyItemInserted(studentList.size - 1)
-            }
-        }
-    }
-
-    // Launcher để hứng kết quả khi SỬA sinh viên
-    private val updateStudentLauncher = registerForActivityResult(
-        ActivityResultContracts.StartActivityForResult()
-    ) { result ->
-        if (result.resultCode == Activity.RESULT_OK) {
-            val updatedStudent = result.data?.getSerializableExtra("UPDATED_STUDENT") as? Student
-            val position = result.data?.getIntExtra("POSITION", -1) ?: -1
-
-            if (updatedStudent != null && position != -1) {
-                studentList[position] = updatedStudent
-                adapter.notifyItemChanged(position)
-            }
-        }
-    }
+    private lateinit var binding: ActivityMainBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
+        binding = ActivityMainBinding.inflate(layoutInflater)
+        setContentView(binding.root)
 
-        rvSinhVien = findViewById(R.id.rv_sinh_vien)
+        // Setup Navigation
+        val navHostFragment = supportFragmentManager
+            .findFragmentById(R.id.nav_host_fragment) as NavHostFragment
+        val navController = navHostFragment.navController
 
-        // Khởi tạo Adapter
-        // Lưu ý: Adapter vẫn dùng layout item_student cũ (chỉ hiện Tên và MSSV)
-        adapter = StudentAdapter(
-            studentList,
-            onItemClick = { position ->
-                // Khi click vào item, mở Detail Activity
-                val intent = Intent(this, StudentDetailActivity::class.java)
-                intent.putExtra("STUDENT_DATA", studentList[position])
-                intent.putExtra("POSITION", position)
-                updateStudentLauncher.launch(intent)
-            },
-            onDeleteClick = { position ->
-                studentList.removeAt(position)
-                adapter.notifyItemRemoved(position)
-            }
-        )
-
-        rvSinhVien.layoutManager = LinearLayoutManager(this)
-        rvSinhVien.adapter = adapter
+        // Setup ActionBar with Navigation
+        val appBarConfiguration = AppBarConfiguration(navController.graph)
+        setupActionBarWithNavController(navController, appBarConfiguration)
     }
 
-    // Tạo Menu
-    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
-        menuInflater.inflate(R.menu.menu_main, menu)
-        return true
-    }
-
-    // Xử lý sự kiện click Menu
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        return when (item.itemId) {
-            R.id.action_add -> {
-                val intent = Intent(this, AddStudentActivity::class.java)
-                addStudentLauncher.launch(intent)
-                true
-            }
-            else -> super.onOptionsItemSelected(item)
-        }
+    override fun onSupportNavigateUp(): Boolean {
+        val navHostFragment = supportFragmentManager
+            .findFragmentById(R.id.nav_host_fragment) as NavHostFragment
+        val navController = navHostFragment.navController
+        return navController.navigateUp() || super.onSupportNavigateUp()
     }
 }

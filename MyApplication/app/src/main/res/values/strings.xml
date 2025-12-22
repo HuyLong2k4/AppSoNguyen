@@ -1,3 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">My Application</string>
+    <string name="app_name">Quản Lý Sinh Viên</string>
+    <string name="student_list_title">Danh Sách Sinh Viên</string>
+    <string name="add_student_title">Thêm Sinh Viên Mới</string>
+    <string name="update_student_title">Cập Nhật Thông Tin</string>
+    <string name="mssv_hint">Mã số sinh viên</string>
+    <string name="name_hint">Họ và tên</string>
+    <string name="phone_hint">Số điện thoại</string>
+    <string name="address_hint">Địa chỉ</string>
+    <string name="add_button">Thêm</string>
+    <string name="update_button">Cập nhật</string>
+    <string name="cancel_button">Hủy</string>
+    <string name="delete_button">Xóa</string>
 </resources>

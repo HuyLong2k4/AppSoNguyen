@@ -1,6 +1,7 @@
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
+    id("kotlin-kapt")
 }
 
 android {
@@ -26,27 +27,43 @@ android {
             )
         }
     }
+
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_11
         targetCompatibility = JavaVersion.VERSION_11
     }
+
     kotlinOptions {
         jvmTarget = "11"
     }
 
     buildFeatures {
         viewBinding = true
+        dataBinding = true
     }
-
-    buildToolsVersion = "36.0.0"
-    ndkVersion = "26.1.10909125"
 }
 
 dependencies {
-    implementation("androidx.recyclerview:recyclerview:1.4.0")
+    // Ưu tiên sử dụng libs (Version Catalog) nếu đã khai báo trong gradle/libs.versions.toml
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
     implementation(libs.material)
+
+    // RecyclerView
+    implementation("androidx.recyclerview:recyclerview:1.3.2")
+
+    // ViewModel & LiveData
+    implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.8.4")
+    implementation("androidx.lifecycle:lifecycle-livedata-ktx:2.8.4")
+
+    // Navigation Component
+    implementation("androidx.navigation:navigation-fragment-ktx:2.8.3")
+    implementation("androidx.navigation:navigation-ui-ktx:2.8.3")
+
+    // Fragment KTX (Giúp thao tác với Fragment dễ dàng hơn)
+    implementation("androidx.fragment:fragment-ktx:1.8.5")
+
+    // Testing
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
