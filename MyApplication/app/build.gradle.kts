@@ -1,7 +1,7 @@
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
-    id("kotlin-kapt")
+    id("com.google.devtools.ksp") version "2.0.21-1.0.28"  // ← THAY KAPT BẰNG KSP
 }
 
 android {
@@ -14,7 +14,6 @@ android {
         targetSdk = 36
         versionCode = 1
         versionName = "1.0"
-
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
@@ -44,10 +43,10 @@ android {
 }
 
 dependencies {
-    // Ưu tiên sử dụng libs (Version Catalog) nếu đã khai báo trong gradle/libs.versions.toml
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
     implementation(libs.material)
+    implementation("androidx.constraintlayout:constraintlayout:2.1.4")
 
     // RecyclerView
     implementation("androidx.recyclerview:recyclerview:1.3.2")
@@ -60,8 +59,17 @@ dependencies {
     implementation("androidx.navigation:navigation-fragment-ktx:2.8.3")
     implementation("androidx.navigation:navigation-ui-ktx:2.8.3")
 
-    // Fragment KTX (Giúp thao tác với Fragment dễ dàng hơn)
+    // Fragment
     implementation("androidx.fragment:fragment-ktx:1.8.5")
+
+    // Room Database với KSP
+    val room_version = "2.6.1"
+    implementation("androidx.room:room-runtime:$room_version")
+    implementation("androidx.room:room-ktx:$room_version")
+    ksp("androidx.room:room-compiler:$room_version")  // ← DÙNG KSP thay vì KAPT
+
+    // Coroutines
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.3")
 
     // Testing
     testImplementation(libs.junit)

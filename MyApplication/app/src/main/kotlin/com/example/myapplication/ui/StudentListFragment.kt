@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
@@ -55,8 +56,22 @@ class StudentListFragment : Fragment() {
     }
 
     private fun observeViewModel() {
+        // Observe students từ Database
         viewModel.students.observe(viewLifecycleOwner) { students ->
-            adapter.updateData(students)
+            students?.let {
+                adapter.updateData(it)
+
+                // Hiển thị số lượng sinh viên
+                binding.tvTitle.text = "Danh Sách Sinh Viên (${it.size})"
+            }
+        }
+
+        // Observe operation status
+        viewModel.operationStatus.observe(viewLifecycleOwner) { status ->
+            if (status.isNotEmpty()) {
+                Toast.makeText(requireContext(), status, Toast.LENGTH_SHORT).show()
+                viewModel.clearStatus()
+            }
         }
     }
 

@@ -1,50 +1,57 @@
 package com.example.myapplication.viewmodel
 
+import android.app.Application
+import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import com.example.myapplication.database.StudentDatabase
 import com.example.myapplication.model.Student
+import com.example.myapplication.repository.StudentRepository
+import kotlinx.coroutines.launch
 
-class StudentViewModel : ViewModel() {
+class StudentViewModel(application: Application) : AndroidViewModel(application) {
 
-    private val _students = MutableLiveData<MutableList<Student>>(mutableListOf())
-    val students: LiveData<MutableList<Student>> = _students
+    private val repository: StudentRepository
+    val students: LiveData<List<Student>>
 
     private val _selectedStudent = MutableLiveData<Student?>()
     val selectedStudent: LiveData<Student?> = _selectedStudent
 
+    private val _operationStatus = MutableLiveData<String>()
+    val operationStatus: LiveData<String> = _operationStatus
+
     init {
-        // Dữ liệu mẫu
-        _students.value = mutableListOf(
-            Student("SV001", "Nguyễn Văn A", "0901234567", "Hà Nội"),
-            Student("SV002", "Trần Thị B", "0912345678", "Hải Phòng"),
-            Student("SV003", "Lê Văn C", "0923456789", "Đà Nẵng"),
-            Student("SV004", "Phạm Thị D", "0934567890", "TP.HCM"),
-            Student("SV005", "Hoàng Văn E", "0945678901", "Cần Thơ")
-        )
+        val studentDao = StudentDatabase.getDatabase(application).studentDao()
+        repository = StudentRepository(studentDao)
+        students = repository.allStudents
     }
 
-    fun addStudent(student: Student) {
-        val currentList = _students.value ?: mutableListOf()
-        currentList.add(student)
-        _students.value = currentList
-    }
-
-    fun updateStudent(mssv: String, hoTen: String, soDienThoai: String, diaChi: String) {
-        val currentList = _students.value ?: return
-        val student = currentList.find { it.mssv == mssv }
-        student?.let {
-            it.hoTen = hoTen
-            it.soDienThoai = soDienThoai
-            it.diaChi = diaChi
-            _students.value = currentList
+    fun addStudent(student: Student) = viewModelScope.launch {
+        try {
+            repository.insert(student)
+            _operationStatus.value = "Thêm sinh viên thành công!"
+        } catch (e: Exception) {
+            _operationStatus.value = "Lỗi: ${e.message}"
         }
     }
 
-    fun deleteStudent(student: Student) {
-        val currentList = _students.value ?: return
-        currentList.remove(student)
-        _students.value = currentList
+    fun updateStudent(student: Student) = viewModelScope.launch {
+        try {
+            repository.update(student)
+            _operationStatus.value = "Cập nhật thông tin thành công!"
+        } catch (e: Exception) {
+            _operationStatus.value = "Lỗi: ${e.message}"
+        }
+    }
+
+    fun deleteStudent(student: Student) = viewModelScope.launch {
+        try {
+            repository.delete(student)
+            _operationStatus.value = "Xóa sinh viên thành công!"
+        } catch (e: Exception) {
+            _operationStatus.value = "Lỗi: ${e.message}"
+        }
     }
 
     fun selectStudent(student: Student) {
@@ -53,5 +60,13 @@ class StudentViewModel : ViewModel() {
 
     fun clearSelection() {
         _selectedStudent.value = null
+    }
+
+    fun clearStatus() {
+        _operationStatus.value = ""
+    }
+
+    suspend fun checkStudentExists(mssv: String): Boolean {
+        return repository.getStudentByMssv(mssv) != null
     }
 }

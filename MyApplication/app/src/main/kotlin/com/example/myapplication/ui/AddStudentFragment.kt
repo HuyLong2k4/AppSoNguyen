@@ -7,10 +7,12 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.example.myapplication.databinding.FragmentAddStudentBinding
 import com.example.myapplication.model.Student
 import com.example.myapplication.viewmodel.StudentViewModel
+import kotlinx.coroutines.launch
 
 class AddStudentFragment : Fragment() {
 
@@ -42,16 +44,25 @@ class AddStudentFragment : Fragment() {
             val diaChi = binding.etDiaChi.text.toString().trim()
 
             if (validateInput(mssv, hoTen, soDienThoai, diaChi)) {
-                val newStudent = Student(mssv, hoTen, soDienThoai, diaChi)
-                viewModel.addStudent(newStudent)
+                // Kiểm tra MSSV đã tồn tại trong database
+                lifecycleScope.launch {
+                    val exists = viewModel.checkStudentExists(mssv)
+                    if (exists) {
+                        binding.etMSSV.error = "MSSV đã tồn tại trong database"
+                        binding.etMSSV.requestFocus()
+                    } else {
+                        val newStudent = Student(mssv, hoTen, soDienThoai, diaChi)
+                        viewModel.addStudent(newStudent)
 
-                Toast.makeText(
-                    requireContext(),
-                    "Thêm sinh viên thành công!",
-                    Toast.LENGTH_SHORT
-                ).show()
+                        Toast.makeText(
+                            requireContext(),
+                            "Đang lưu vào database...",
+                            Toast.LENGTH_SHORT
+                        ).show()
 
-                findNavController().navigateUp()
+                        findNavController().navigateUp()
+                    }
+                }
             }
         }
 
@@ -87,14 +98,6 @@ class AddStudentFragment : Fragment() {
         if (diaChi.isEmpty()) {
             binding.etDiaChi.error = "Vui lòng nhập địa chỉ"
             binding.etDiaChi.requestFocus()
-            return false
-        }
-
-        // Kiểm tra MSSV đã tồn tại chưa
-        val existingStudent = viewModel.students.value?.find { it.mssv == mssv }
-        if (existingStudent != null) {
-            binding.etMSSV.error = "MSSV đã tồn tại"
-            binding.etMSSV.requestFocus()
             return false
         }
 

@@ -9,6 +9,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
 import com.example.myapplication.databinding.FragmentUpdateStudentBinding
+import com.example.myapplication.model.Student
 import com.example.myapplication.viewmodel.StudentViewModel
 
 class UpdateStudentFragment : Fragment() {
@@ -17,6 +18,7 @@ class UpdateStudentFragment : Fragment() {
     private val binding get() = _binding!!
 
     private val viewModel: StudentViewModel by activityViewModels()
+    private var currentStudent: Student? = null
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -37,6 +39,7 @@ class UpdateStudentFragment : Fragment() {
     private fun observeViewModel() {
         viewModel.selectedStudent.observe(viewLifecycleOwner) { student ->
             student?.let {
+                currentStudent = it
                 // Data Binding sẽ tự động điền dữ liệu vào các EditText
                 binding.student = it
                 binding.executePendingBindings()
@@ -52,11 +55,13 @@ class UpdateStudentFragment : Fragment() {
             val diaChi = binding.etDiaChi.text.toString().trim()
 
             if (validateInput(hoTen, soDienThoai, diaChi)) {
-                viewModel.updateStudent(mssv, hoTen, soDienThoai, diaChi)
+                // Tạo đối tượng Student mới với dữ liệu đã cập nhật
+                val updatedStudent = Student(mssv, hoTen, soDienThoai, diaChi)
+                viewModel.updateStudent(updatedStudent)
 
                 Toast.makeText(
                     requireContext(),
-                    "Cập nhật thông tin thành công!",
+                    "Đang cập nhật vào database...",
                     Toast.LENGTH_SHORT
                 ).show()
 
